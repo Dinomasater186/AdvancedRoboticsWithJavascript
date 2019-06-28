@@ -1,0 +1,23 @@
+/*      Job Example 2 
+move_all_joints takes 5 angles in degrees, one for each 
+of Dexter's joints.
+move_to takes an xyz position (in meters from Dexter's base),
+where you want the end effect to end up.
+Beware, the 2nd and 3rd args to move_to determine the ending
+J5_direction and which way the joints go. 
+These are tricky to get right.
+*/
+new Job({name: "j2",
+        do_list: 
+        [Dexter.move_all_joints([0, 75, 0, -90, 0]),
+        function wave(){
+			let cmds = [];
+    		for (var i = 0; i < 10; i++){
+    			cmds.push(Dexter.move_all_joints([0, 75, -70, -90, 0]))
+    			cmds.push(Dexter.move_all_joints([0, 75, -40, -90, 0]))
+    		}
+			return cmds;
+		}
+        ]})
+//After defining this Job by clicking the EVAL button,
+//click this job's button in the Output pane's header to start it.

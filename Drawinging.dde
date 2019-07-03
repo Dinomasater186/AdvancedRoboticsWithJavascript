@@ -1,0 +1,22 @@
+DXF.init_drawing({dxf_filepath: "choose_file",    //image to draw
+                 three_points: [[0,  .55, 0.05],  //Point1 locates the drawing plane
+                                [0,   .4, 0.05],  //Point2
+                                [.15, .4, 0.05]], //Point3
+                 plane_normal_guess: [0, 0, 1],
+                 calc_plane_normal: false,
+                 tool_height: 5.08 * _cm,
+                 tool_length: 8.255 * _cm,
+                 DXF_units: undefined, //0.001 means each DXF distance unit is worth 1mm
+                                       //undefined means scale drawing to fit the three_points
+                 draw_speed:  1 * _cm/_s,
+                 draw_res:  0.5 * _mm, //Max step size of straight line
+                 lift_height: 1 * _cm, //distance above surface when pen is not drawing
+                 tool_action: false,
+                 tool_action_on_function: function(){
+					return [make_ins("w", 64, 2),
+							dummy_move()]
+				 },
+                 tool_action_off_function: function(){
+                    return [make_ins("w", 64, 0),
+                            dummy_move()]
+                 }})

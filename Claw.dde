@@ -1,0 +1,25 @@
+new Job({name: "clawMachine",
+	do_list: [
+	function wave(){
+    	let locations = [
+			[0.2, 0, 0.5],//home
+			[0.2, 0.1, 0.5],//grab
+			[0.2, 0.3, 0.5]//shute
+		];
+		let cmds = [];
+    	cmds.push(Dexter.move_to([locations [0][0], locations [0][1], locations [0][2]]));
+    	for (let i = -1; i < 2; i++){
+    		cmds.push(Dexter.move_to([locations[0][0], (locations [0][1] + (i) * 0.2), locations [0][2]]));
+        	cmds.push(Dexter.move_to([locations[0][0], (locations [0][1] + (i) * 0.2), (locations [0][2]) - 0.2]));
+     	   	cmds.push(Dexter.move_to([locations[0][0], (locations [0][1] + (i) * 0.2), locations [0][2]]));
+    	}
+    	cmds.push(Dexter.move_to([locations [1][0], locations [1][1], (locations [1][2])]));
+    	cmds.push(Dexter.move_to([locations [1][0], locations [1][1], (locations [1][2] - 0.4)]));
+    	//open and close claw
+        cmds.push(Dexter.move_to([locations [1][0], locations [1][1], (locations [1][2])]));
+    	cmds.push(Dexter.move_to([locations [2][0], locations [2][1], (locations [2][2])]));
+    	//open and close claw
+    	cmds.push(Dexter.move_to([locations[1][0], locations [0][1], locations [0][2]]));
+        return cmds;
+	}
+     ]})

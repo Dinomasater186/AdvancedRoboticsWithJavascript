@@ -1,5 +1,5 @@
-var open = 150;
-var close = 30;
+var open1 = 150;
+var close1 = 30;
 new Job({name: "clawMachine",
 	do_list: [
     Dexter.set_parameter("RebootServo", 1),
@@ -18,19 +18,19 @@ new Job({name: "clawMachine",
      	   	cmds.push(Dexter.move_to([locations[0][0], (locations [0][1] + (i) * 0.2), locations [0][2]]));
     	}
     	cmds.push(Dexter.move_to([locations [1][0], locations [1][1], (locations [1][2])]));
-        cmds.push(Dexter.move_all_joints([NaN, NaN, NaN, NaN, NaN, 0, open]));
+        cmds.push(Dexter.move_all_joints([NaN, NaN, NaN, NaN, NaN, 0, open1]));
         cmds.push(Dexter.sleep(2));
         cmds.push(Dexter.empty_instruction_queue());
     	cmds.push(Dexter.move_to([locations [1][0], locations [1][1], (locations [1][2] - 0.4)]));
-    	cmds.push(Dexter.move_all_joints([NaN, NaN, NaN, NaN, NaN, 0, close]));
+    	cmds.push(Dexter.move_all_joints([NaN, NaN, NaN, NaN, NaN, 0, close1]));
         cmds.push(Dexter.sleep(2));
         cmds.push(Dexter.empty_instruction_queue());
         cmds.push(Dexter.move_to([locations [1][0], locations [1][1], (locations [1][2])]));
     	cmds.push(Dexter.move_to([locations [2][0], locations [2][1], (locations [2][2])]));
-    	cmds.push(Dexter.move_all_joints([NaN, NaN, NaN, NaN, NaN, 0, open]));
+    	cmds.push(Dexter.move_all_joints([NaN, NaN, NaN, NaN, NaN, 0, open1]));
         cmds.push(Dexter.sleep(2));
         cmds.push(Dexter.empty_instruction_queue());
-        cmds.push(Dexter.move_all_joints([NaN, NaN, NaN, NaN, NaN, 0, close]));
+        cmds.push(Dexter.move_all_joints([NaN, NaN, NaN, NaN, NaN, 0, close1]));
         cmds.push(Dexter.sleep(2));
         cmds.push(Dexter.empty_instruction_queue());
     	cmds.push(Dexter.move_to([locations[1][0], locations [0][1], locations [0][2]]));

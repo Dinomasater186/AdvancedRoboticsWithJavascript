@@ -31,8 +31,8 @@ new Job({name: "clawMachine",
         cmds.push(Dexter.sleep(2));
         cmds.push(Dexter.empty_instruction_queue());
         cmds.push(Dexter.move_all_joints([NaN, NaN, NaN, NaN, NaN, 0, close]));
-        cmds.push(Dexter.empty_instruction_queue());
         cmds.push(Dexter.sleep(2));
+        cmds.push(Dexter.empty_instruction_queue());
     	cmds.push(Dexter.move_to([locations[1][0], locations [0][1], locations [0][2]]));
         return cmds;
 	}

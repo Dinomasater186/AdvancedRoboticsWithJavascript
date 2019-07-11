@@ -1,0 +1,24 @@
+function getParameterDefinitions() {
+    return [
+        { name: 'length', type: 'int', initial: 8, caption: 'Length?' }, 
+        { name: 'width', type: 'int', initial: 15.5, caption: 'Width?' }, 
+        { name: 'radiusOfPen', type: 'int', initial: 4.75, caption: 'Pen radius?' }
+    ];
+}
+function main() { 
+var w = params.length;
+var h = params.width;
+var rad = params.radiusOfPen;
+
+return difference(
+    translate([-w * 4,-w * 2,-3], cube([w * 4.75,w * 4,h+10])),
+    union(
+        rotate([0,0,45],translate([-w/2,-w/2,0],color("black",cube([w,w,h])))),
+        translate([0,-w/2,0],color("black",cube([w/2,w,h]))),
+        translate([-13.5,-15,-3],color("black",cube([20,40,3]))),
+        rotate([0,90,0],translate([-15,-15,3.5],color("black",cube([15,40,3]))))
+    ),
+    translate([-w * 4 + rad + 2,0,-3], cylinder({r1: rad, r2: rad - 1.25,  h: (h + 10)}))
+ )
+    
+}

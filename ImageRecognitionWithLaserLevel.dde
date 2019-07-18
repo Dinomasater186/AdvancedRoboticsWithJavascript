@@ -1,0 +1,202 @@
+var cv = require("opencv.js")
+
+function handle_hello_opencv(vals){
+    if(vals.clicked_button_value == "show diff"){
+        setTimeout(function(){
+            let mat1          = cv.imread(src1_image_id)
+            let mat2          = cv.imread(src2_image_id)
+            
+            let dsize = new cv.Size(300, 300);
+            
+            let mat1a = new cv.Mat()
+            let mat2a = new cv.Mat()
+            
+            cv.resize(mat1, mat1a, dsize, 0, 0, cv.INTER_NEAREST );
+            cv.resize(mat2, mat2a, dsize, 0, 0, cv.INTER_NEAREST );
+            
+            let dif           = new cv.Mat()
+            //out(dif.cols)
+            /*
+            
+            let src = cv.imread('canvasInput');
+			let dst = new cv.Mat();
+			let dsize = new cv.Size(300, 300);
+			// You can try more different parameters
+			cv.resize(src, dst, dsize, 0, 0, cv.INTER_AREA);
+            
+            */
+            cv.subtract(mat1a, mat2a, dif)
+            //out(dif.cols)
+            var data = [];
+            var dataX = [];
+            var total = 0;
+            var R = 0;
+            var G = 0;
+            var B = 0;
+            var K = 0;
+            var M = 0;
+            var C = 0;
+            var Y = 0;
+            /*
+            
+            R' = R/255
+			G' = G/255
+			B' = B/255
+			The black key (K) color is calculated from the red (R'), green (G') and blue (B') colors:
+			K = 1-max(R', G', B')
+			The yellow color (Y) is calculated from the blue (B') and black (K) colors:
+			Y = (1-B'-K) / (1-K)
+            
+            */
+            //out(Math.max(1,2));
+            for(var y = dif.cols; y >= 0; y--){
+            	for(var x = dif.rows; x >= 0; x--){
+            		dif.ucharPtr(x, y)[3] = 255;
+                    R = dif.ucharPtr(x, y)[0]/255
+                    G = dif.ucharPtr(x, y)[1]/255
+                    B = dif.ucharPtr(x, y)[2]/255
+                    K = Math.max(R,G)
+                    K = Math.max(K,B)
+                    K = 1 - K;
+                    C = (1 - R - K) / (1 - K)
+                    M = (1 - G - K) / (1 - K)
+                    Y = (1 - B - K) / (1 - K)
+                    Y = Y * 100;
+                    M = M * 100;
+                    C = C * 100;
+                    K = K * 100;
+                    //if (j < 95 && j > 85){
+                    	//out("red " + dif.ucharPtr(i, j)[0] + " blue " + dif.ucharPtr(i, j)[1] + " green " + dif.ucharPtr(i, j)[2]);
+                    //}
+                    if (M >= 40 && Y >= 40 && C <= 5 && K <= 95 && dif.ucharPtr(x,y)[0] >= 60){
+                    	data.push(y);
+                        //out(Y);
+                        dataX.push(x);
+                        //out("X: " + y + " Y: " + x);
+                        //out(i);
+                        //out(j + " " + dif.ucharPtr(i, j)[0]);
+                        
+                        total ++;
+                        for (var k = 0; k < 10; k ++){
+                        	dif.ucharPtr(x + k, y)[2] = 255;
+                        }
+                    }
+            	}
+            }
+            out(dif.rows + " The rows");
+            
+            for (var i = total - 1; i >= 0; i --){
+            	if(dataX[i] >= dif.rows){
+                	out(data[i] + " " + i);
+                    data.splice(i, 1);
+                    dataX.splice(i,1);
+                    total --;
+                }
+            }
+            
+            // 128/2 = 64
+            var hightDifPos = [];
+            for (var i = total - 2; i >= 0; i --){
+            	if (Math.abs(dataX[i] - dataX[i + 1]) >= 45){
+                	hightDifPos.push(i)
+                }
+            }
+            out(data + " The Y data");
+            out(hightDifPos + " Place where it detects objects");
+            var average = 0;
+            var averageX = 0;
+            var objStart = data[hightDifPos[0]+1]
+            var objLength = data[hightDifPos[1]] - data[hightDifPos[0] + 1];
+            out("hightStart " + dataX[hightDifPos[0]] + " hightEnd " + dataX[hightDifPos[1] + 1]);
+            out(dataX + " " + data[hightDifPos[1] - 1] + " " + data[hightDifPos[0] + 1]);
+            out(objLength + " The objects length");
+            out(objStart + " Start here");
+            
+            if (hightDifPos.length >= 2){
+            	for(var i = 0; i < hightDifPos[0] - hightDifPos[1]; i ++){
+            		average += dataX[hightDifPos[1] + i + 1];
+                }
+                out("First point " + dataX[hightDifPos[1]] + " Secound point " + (dataX[hightDifPos[0] - 1]));
+                averageX = (data[hightDifPos[1]] + data[hightDifPos[0] - 1])/2;
+            }
+            else{
+            	out("No object detected!")
+            }
+            
+            
+            average = average / (hightDifPos[0] - hightDifPos[1]);
+            
+            
+            out(average + " Average height of the object in pixels")
+            out(averageX + " The average X location of the object " + dif.cols/2 + " Center of screen");
+            
+            //Math.abs(dif.rows - average) = 0.1m
+            var oneMeterInPixels = Math.abs(dif.rows - average) * 10;
+            out(oneMeterInPixels + " One meter in pixels");
+            out(average/oneMeterInPixels + " Distance to object")
+            
+            //heightDifCamLaser = .1m
+            //top = 45 deg
+            //midle = 0 deg
+            //bot = -45 deg
+            
+            var distSide = Math.abs(dif.cols - averageX)/oneMeterInPixels;
+            var distToObjInMeter = average/oneMeterInPixels;
+            
+            
+            angle = atan2d(distToObjInMeter, distSide);
+            out(angle + "Angle to the object");
+            
+            
+            //show where the object is detected
+            
+            
+            for (var i = objStart; i < objStart + objLength; i ++){
+            	dif.ucharPtr(average,i)[1] = 255;
+                dif.ucharPtr(average - 1,i)[1] = 255;
+                dif.ucharPtr(average - 2,i)[1] = 255;
+                dif.ucharPtr(average - 3,i)[1] = 255;
+                dif.ucharPtr(average - 4,i)[1] = 255;
+                dif.ucharPtr(average - 5,i)[1] = 255;
+            }
+            
+            
+            //show where all the points are
+            
+            
+            for (var i = 0; i < total; i ++){
+            	dif.ucharPtr(dataX[i],data[i])[1] = 255;
+            }
+            
+            
+            cv.imshow("diff_canvas_id", dif)
+            out();
+         	mat1.delete()
+            mat2.delete()
+            dif.delete()
+        }, 100)
+    }
+
+}
+
+
+show_window({
+    content:
+    `<b>Hello OpenCV.js</b><br/>
+     1. Choose a file with an extension of .gif, .jpeg or .png<br/>
+     2. Click on "show image".<br/>
+     The image on the left has no cv processing.<br/>
+     The right is changed to gray by cv.<br/>
+     You may have to click on "Show Images" twice to show the 2nd image.<br/>
+    <input type="file" id="file1_input_id"
+           accept="image/gif, image/jpeg, image/png"/>
+    <input type="file" id="file2_input_id"
+           accept="image/gif, image/jpeg, image/png"/>
+    <input type="button" value="show diff"/>
+    <p/>
+    <img id="src1_image_id" src="C:/Users/extstudent/Pictures/Saved Pictures/Picture1b.jpg"></img>
+    <img id="src2_image_id" src="C:/Users/extstudent/Pictures/Saved Pictures/Picture1a.jpg"></img>
+    <canvas id="diff_canvas_id"></canvas>`,
+    x: 50, y: 50, width: 800, height: 600,
+    callback: handle_hello_opencv
+})
